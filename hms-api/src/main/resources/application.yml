@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: hms-saas-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hms_saas
+    username: hms_user
+    password: hms_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  jwt:
+    secret: this_is_a_super_secret_key_for_jwt_tokens_must_be_at_least_256_bits
+    expiration: 86400000 # 24 hours in milliseconds

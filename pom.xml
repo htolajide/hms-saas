@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+		<groupId>com.hms</groupId>
+		<artifactId>hms-saas</artifactId>
+		<version>1.0.0</version>
+		<packaging>pom</packaging>
+		<name>HMS SaaS Parent</name>
+
+		<modules>
+			<module>hms-core</module>
+			<module>hms-auth</module>
+			<module>hms-staff</module>
+			<module>hms-clinical</module>
+			<module>hms-finance</module>
+			<module>hms-api</module>
+		</modules>
+
+		<properties>
+			<java.version>17</java.version>
+			<spring-boot.version>3.2.3</spring-boot.version>
+			<lombok.version>1.18.30</lombok.version>
+			<jjwt.version>0.12.5</jjwt.version>
+		</properties>
+
+		<dependencyManagement>
+			<dependencies>
+				<!-- Spring Boot Dependencies -->
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-dependencies</artifactId>
+					<version>${spring-boot.version}</version>
+					<type>pom</type>
+					<scope>import</scope>
+				</dependency>
+				<!-- Internal Modules -->
+				<dependency>
+					<groupId>com.hms</groupId>
+					<artifactId>hms-core</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.hms</groupId>
+					<artifactId>hms-auth</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.hms</groupId>
+					<artifactId>hms-staff</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.hms</groupId>
+					<artifactId>hms-clinical</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.hms</groupId>
+					<artifactId>hms-finance</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</dependencyManagement>
+
+		<build>
+			<pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>${spring-boot.version}</version>
+					</plugin>
+				</plugins>
+			</pluginManagement>
+		</build>
+</project>
+	
