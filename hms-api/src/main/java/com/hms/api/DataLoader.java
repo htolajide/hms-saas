@@ -38,7 +38,16 @@ public class DataLoader {
                 return roleRepository.save(role);
             });
 
-            // 3. Create the SaaS Super Admin User
+            // 3. Create Doctor Role (hospitalId = 1)
+            Role doctorRole = roleRepository.findByName("Doctor").orElseGet(() -> {
+                Role role = new Role();
+                role.setName("Doctor");
+                role.setDescription("Handles consultations and prescriptions");
+                role.setHospitalId(1L);
+                return roleRepository.save(role);
+            });
+
+            // 4. Create the SaaS Super Admin User
             if (!staffRepository.existsByEmail("superadmin@hms-saas.com")) {
                 Staff superAdmin = Staff.builder()
                         .hospitalId(null) // Belongs to the SaaS platform, not a specific hospital
@@ -57,7 +66,7 @@ public class DataLoader {
                 System.out.println("✅ SUPER ADMIN CREATED: superadmin@hms-saas.com / super123");
             }
 
-            // 4. Create the Hospital Admin User
+            // 5. Create the Hospital Admin User
             if (!staffRepository.existsByEmail("admin@firstmercy.com")) {
                 Staff hospitalAdmin = Staff.builder()
                         .hospitalId(1L) // Belongs to Hospital 1

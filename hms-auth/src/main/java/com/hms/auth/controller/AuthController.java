@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,12 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid email or password"));
         }
+    }
+
+    @GetMapping("/test-secure")
+    public ResponseEntity<?> testSecureEndpoint() {
+        return ResponseEntity
+                .ok(Map.of("message", "🔒 Success! You are authenticated and accessing a secure endpoint."));
     }
 
     @PostMapping("/super-admin/reset-password")
