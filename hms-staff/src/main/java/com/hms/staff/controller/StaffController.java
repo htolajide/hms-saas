@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/staff")
@@ -23,7 +23,6 @@ public class StaffController {
 
     private final StaffService staffService;
 
-    // Anyone with a valid token can view staff
     @GetMapping
     public ResponseEntity<List<StaffResponseDto>> getAllStaff() {
         return ResponseEntity.ok(staffService.getAllStaff());
@@ -34,11 +33,39 @@ public class StaffController {
         return ResponseEntity.ok(staffService.getStaffById(id));
     }
 
-    // ONLY Super Admin or Hospital Admin can create staff
     @PostMapping
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'HOSPITAL_ADMIN')")
-    public ResponseEntity<StaffResponseDto> createStaff(@RequestBody StaffRequestDto dto) {
-        StaffResponseDto createdStaff = staffService.createStaff(dto);
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_HOSPITAL_ADMIN')")
+    public ResponseEntity<StaffResponseDto> createStaff(
+            @RequestPart("staff") StaffRequestDto dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+
+        StaffResponseDto createdStaff = staffService.createStaff(dto, photo);
         return new ResponseEntity<>(createdStaff, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_HOSPITAL_ADMIN')")
+    public ResponseEntity<StaffResponseDto> updateStaff(
+            @PathVariable("id") Long id,
+            @RequestPart("staff") StaffRequestDto dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) {
+
+        // --- DEBUG LOGGING ---
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("==================================================");
+        System.out.println("DEBUG: Current User = " + auth.getName());
+        System.out.println("DEBUG: Authorities = " + auth.getAuthorities());
+        System.out.println("==================================================");
+        // -----------------------
+
+        StaffResponseDto updatedStaff = staffService.updateStaff(id, dto, photo);
+        return ResponseEntity.ok(updatedStaff);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_HOSPITAL_ADMIN')")
+    public ResponseEntity<?> deleteStaff(@PathVariable Long id) {
+        staffService.deleteStaff(id);
+        return ResponseEntity.ok(Map.of("message", "Staff member deleted successfully"));
     }
 }

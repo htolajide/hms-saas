@@ -1,15 +1,7 @@
 package com.hms.staff.entity;
 
 import com.hms.core.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,18 +40,19 @@ public class Staff extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // --- ROLE MAPPING ---
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 
-    private String department;
-    private String designation;
+    // --- RANK MAPPING (The proper way) ---
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rank_id")
+    private Rank rank;
 
-    @Column(precision = 12, scale = 2)
-    private BigDecimal basicSalary;
-
-    @Column(name = "passport_photo")
-    private String passportPhoto;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     private String phone;
     private String qualification;
@@ -68,7 +60,10 @@ public class Staff extends BaseEntity implements UserDetails {
     @Column(name = "joined_date")
     private LocalDate joinedDate;
 
-    // --- Spring Security UserDetails Methods ---
+    @Column(name = "passport_photo", columnDefinition = "text")
+    private String passportPhoto;
+
+    // --- UserDetails Methods ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String roleName = (role != null) ? role.getName().toUpperCase().replace(" ", "_") : "USER";

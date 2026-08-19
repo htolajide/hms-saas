@@ -1,7 +1,11 @@
 package com.hms.api;
 
+import com.hms.staff.entity.Department;
+import com.hms.staff.entity.Rank;
 import com.hms.staff.entity.Role;
 import com.hms.staff.entity.Staff;
+import com.hms.staff.repository.DepartmentRepository;
+import com.hms.staff.repository.RankRepository;
 import com.hms.staff.repository.RoleRepository;
 import com.hms.staff.repository.StaffRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -9,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Configuration
@@ -17,6 +20,7 @@ public class DataLoader {
 
     @Bean
     public CommandLineRunner initData(StaffRepository staffRepository, RoleRepository roleRepository,
+            RankRepository rankRepository, DepartmentRepository departmentRepository,
             PasswordEncoder passwordEncoder) {
         return args -> {
 
@@ -47,6 +51,54 @@ public class DataLoader {
                 return roleRepository.save(role);
             });
 
+            String[] roleNames = { "Super Admin", "Hospital Admin", "Doctor", "Nurse", "Lab Technologist", "Pharmacist",
+                    "Radiographer", "Accountant", "Cashier" };
+            for (String roleName : roleNames) {
+                roleRepository.findByName(roleName).orElseGet(() -> {
+                    Role role = new Role();
+                    role.setName(roleName);
+                    role.setDescription("Default " + roleName + " role");
+                    role.setHospitalId(roleName.equals("Super Admin") ? null : 1L);
+                    return roleRepository.save(role);
+                });
+            }
+
+            // 2. Seed Ranks (Pre-saved Designations with Salaries)
+            Object[][] ranksData = {
+                    { "Medical Officer", new java.math.BigDecimal("250000.00") },
+                    { "Senior Medical Officer", new java.math.BigDecimal("350000.00") },
+                    { "Nursing Officer", new java.math.BigDecimal("180000.00") },
+                    { "Senior Nursing Officer", new java.math.BigDecimal("220000.00") },
+                    { "Medical Lab Scientist", new java.math.BigDecimal("170000.00") },
+                    { "Pharmacist", new java.math.BigDecimal("200000.00") }
+            };
+
+            for (Object[] rankData : ranksData) {
+                rankRepository.findByName((String) rankData[0]).orElseGet(() -> {
+                    Rank rank = new Rank();
+                    rank.setName((String) rankData[0]);
+                    rank.setHospitalId(1L);
+                    rank.setBasicSalary((java.math.BigDecimal) rankData[1]);
+                    return rankRepository.save(rank);
+                });
+            }
+
+            String[] departmentNames = {
+                    "Administration", "OPD", "Emergency", "Pediatrics",
+                    "Surgery", "Medical", "Laboratory", "Pharmacy",
+                    "Radiology", "Maternity", "ICU", "Cardiology"
+            };
+
+            for (String deptName : departmentNames) {
+                departmentRepository.findByName(deptName).orElseGet(() -> {
+                    Department dept = new Department();
+                    dept.setName(deptName);
+                    dept.setHospitalId(1L);
+                    dept.setDescription(deptName + " Department");
+                    return departmentRepository.save(dept);
+                });
+            }
+
             // 4. Create the SaaS Super Admin User
             if (!staffRepository.existsByEmail("superadmin@hms-saas.com")) {
                 Staff superAdmin = Staff.builder()
@@ -56,9 +108,6 @@ public class DataLoader {
                         .email("superadmin@hms-saas.com")
                         .password(passwordEncoder.encode("super123"))
                         .role(superAdminRole)
-                        .department("Executive")
-                        .designation("Super Admin")
-                        .basicSalary(new BigDecimal("0.00"))
                         .phone("0000000000")
                         .joinedDate(LocalDate.now())
                         .build();
@@ -75,9 +124,6 @@ public class DataLoader {
                         .email("admin@firstmercy.com")
                         .password(passwordEncoder.encode("admin123"))
                         .role(hospitalAdminRole)
-                        .department("Administration")
-                        .designation("Hospital Admin")
-                        .basicSalary(new BigDecimal("0.00"))
                         .phone("08000000000")
                         .joinedDate(LocalDate.now())
                         .build();

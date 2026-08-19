@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import api from '../services/api';
 import { Lock, Mail, Loader2 } from 'lucide-react';
 
@@ -88,10 +88,13 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-gray-500">
-          <p>Test Credentials:</p>
-          <p>superadmin@hms-saas.com / super123</p>
-          <p>admin@firstmercy.com / admin123</p>
+        <div className="mt-6 text-center text-sm">
+          <p className="text-gray-600">
+            Own a hospital?{' '}
+            <Link to="/register" className="text-primary font-semibold hover:underline">
+              Register your hospital here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

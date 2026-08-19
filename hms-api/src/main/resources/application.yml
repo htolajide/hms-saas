@@ -16,8 +16,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 app:
   jwt:
     secret: this_is_a_super_secret_key_for_jwt_tokens_must_be_at_least_256_bits
     expiration: 86400000 # 24 hours in milliseconds
+
+  
