@@ -63,6 +63,10 @@ public class Staff extends BaseEntity implements UserDetails {
     @Column(name = "passport_photo", columnDefinition = "text")
     private String passportPhoto;
 
+    private String resetToken;
+
+    private java.time.LocalDateTime resetTokenExpiry;
+
     // --- UserDetails Methods ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

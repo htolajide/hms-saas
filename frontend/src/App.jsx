@@ -3,6 +3,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard'; // Import the new Dashboard
 import StaffManagement from './pages/StaffManagement';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import { LogOut, Building2 } from 'lucide-react';
 
 const DashboardLayout = ({ children }) => {
@@ -17,7 +19,7 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Clean Top Navigation Bar (No more tabs) */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+      <header className="bg-white shadow-sm sticky top-0 z-20">
         <div className="px-6 lg:px-12 py-4">
           <div className="flex justify-between items-center">
             {/* Logo and Home Link */}
@@ -58,7 +60,7 @@ const DashboardLayout = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-4">
+      <footer className="bg-white py-4">
         <div className="px-6 lg:px-12 text-center text-xs text-gray-500">
           <p>© 2026 HMS SaaS. All rights reserved.</p>
         </div>
@@ -82,6 +84,8 @@ function App() {
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* PROTECTED ROUTES */}
         <Route 
