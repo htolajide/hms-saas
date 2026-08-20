@@ -119,7 +119,7 @@ export default function AddStaffModal({ onClose, onSaved, editData = null }) {
       // 3. Wait 1.5 seconds so the user can read the message, then close
       setTimeout(() => {
         onClose();
-      }, 1500);
+      }, 3000);
 
     } catch (err) {
       console.error("Save error details:", err.response?.data);

@@ -23,28 +23,28 @@ export default function Dashboard() {
       description: "Register patients, view records, and consultations.",
       icon: HeartPulse,
       route: "/patients", // Placeholder for next stage
-      allowedRoles: ["Super Admin", "Hospital Admin", "Doctor", "Nurse"]
+      allowedRoles: [ "Hospital Admin", "Doctor", "Nurse"]
     },
     {
       title: "Finance & Billing",
       description: "Invoices, payments, and staff payroll.",
       icon: DollarSign,
       route: "/finance", // Placeholder
-      allowedRoles: ["Super Admin", "Hospital Admin"]
+      allowedRoles: [ "Hospital Admin"]
     },
     {
       title: "Pharmacy & Inventory",
-      description: "Manage drugs, stock levels, and suppliers.",
+      description: "Manage drugs, stock levels, and dispensing.",
       icon: Pill,
       route: "/pharmacy", // Placeholder
-      allowedRoles: ["Super Admin", "Hospital Admin", "Pharmacist"]
+      allowedRoles: [ "Hospital Admin", "Pharmacist"]
     },
     {
       title: "Laboratory",
       description: "Manage lab requests and test results.",
       icon: Activity,
       route: "/laboratory", // Placeholder
-      allowedRoles: ["Super Admin", "Hospital Admin", "Lab Technologist"]
+      allowedRoles: [ "Hospital Admin", "Lab Technologist"]
     },
     {
       title: "Hospital Management",

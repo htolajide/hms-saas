@@ -5,6 +5,9 @@ import Dashboard from './pages/Dashboard'; // Import the new Dashboard
 import StaffManagement from './pages/StaffManagement';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PatientManagement from './pages/PatientManagement';
+import TriageManagement from './pages/TriageManagement';
+import ConsultationPage from './pages/ConsultationPage';
 import { LogOut, Building2 } from 'lucide-react';
 
 const DashboardLayout = ({ children }) => {
@@ -104,6 +107,31 @@ function App() {
             </ProtectedRoute>
           } 
         />
+      
+        <Route 
+          path="/patients" 
+          element={
+            <ProtectedRoute>
+              <PatientManagement />
+            </ProtectedRoute>
+          } />
+
+        <Route 
+          path="/triage" 
+          element={
+            <ProtectedRoute>
+              <TriageManagement />
+            </ProtectedRoute>
+
+          } />
+          
+        <Route 
+            path="/consultations" 
+            element={
+              <ProtectedRoute>
+                  <ConsultationPage />
+              </ProtectedRoute>
+            } />
         
         {/* Placeholder routes for future modules */}
         <Route path="/patients" element={<ProtectedRoute><div className="p-8 text-2xl font-bold text-gray-500">Patient Module Coming Soon...</div></ProtectedRoute>} />

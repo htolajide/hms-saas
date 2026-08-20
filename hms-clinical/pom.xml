@@ -10,9 +10,13 @@
     </parent>
     <artifactId>hms-clinical</artifactId>
     <dependencies>
-          <dependency>
+        <dependency>
             <groupId>com.hms</groupId>
             <artifactId>hms-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hms</groupId>
+            <artifactId>hms-staff</artifactId>
         </dependency>
          <dependency>
             <groupId>org.springframework.boot</groupId>
