@@ -1,8 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { 
-  Users, HeartPulse, DollarSign, Pill, Building2, 
-  Activity, ClipboardList, Settings 
-} from 'lucide-react';
+import { Users, HeartPulse, DollarSign, Pill, Building2, Activity, ClipboardList, Settings} from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -47,11 +44,18 @@ export default function Dashboard() {
       allowedRoles: [ "Hospital Admin", "Lab Technologist"]
     },
     {
-      title: "Hospital Management",
-      description: "Manage registered hospitals and SaaS settings.",
-      icon: Building2,
-      route: "/hospitals", // Placeholder for Super Admin
-      allowedRoles: ["Super Admin"] // ONLY Super Admin sees this
+        title: "Platform Management",
+        description: "Manage registered hospitals and SaaS settings.",
+        icon: Building2,
+        route: "/super-admin",
+        allowedRoles: ["Super Admin"] // ONLY Super Admin sees this
+    },
+    {
+        title: "Hospital Settings",
+        description: "Manage dropdowns, categories, and configuration",
+        icon: Settings,
+        route: "/settings",
+        allowedRoles: ["Hospital Admin"]
     }
   ];
 
@@ -71,7 +75,6 @@ export default function Dashboard() {
             : 'Manage your hospital operations efficiently.'}
         </p>
       </div>
-
       {/* Dynamic Module Cards Grid */}
       <div>
         <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Modules</h3>

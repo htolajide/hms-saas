@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -46,18 +47,32 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(credentials.get("email"), credentials.get("password")));
 
-            Staff staff = (Staff) authentication.getPrincipal();
-            String token = jwtService.generateToken(staff.getEmail(), staff.getRole().getName());
+            Staff staff = staffRepository.findByEmail(credentials.get("email"))
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-            return ResponseEntity.ok(Map.of(
-                    "token", token,
-                    "message", "Login successful",
-                    "role", staff.getRole().getName(),
-                    "fullName", staff.getFullName()));
+            // Pass null safely if Super Admin has no hospital
+            String token = jwtService.generateToken(
+                    staff.getEmail(),
+                    staff.getRole().getName(),
+                    staff.getHospitalId() // Will be null for Super Admin
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("role", staff.getRole().getName());
+            response.put("fullName", staff.getFullName());
+            response.put("hospitalId", staff.getHospitalId()); // Frontend can store null
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
+            // Log the actual error internally so you can see it in console
+            System.err.println("LOGIN FAILED FOR " + credentials.get("email") + ": " + e.getMessage());
+            // e.printStackTrace();
+
             return ResponseEntity.status(401).body(Map.of("error", "Invalid email or password"));
         }
     }

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { X, Loader2, Plus, Trash2 } from 'lucide-react';
+import { getHospitalId } from '../utils/auth';
 
 export default function AddConsultationModal({ patientId, onClose, onSaved }) {
   const [loading, setLoading] = useState(false);
@@ -8,17 +9,22 @@ export default function AddConsultationModal({ patientId, onClose, onSaved }) {
   const [success, setSuccess] = useState('');
   const [medications, setMedications] = useState([]);
   const [labTests, setLabTests] = useState([]);
-
+  
   useEffect(() => {
-    const fetchCatalogs = async () => {
-      const [medRes, labRes] = await Promise.all([
-        api.get('/catalog/medications'),
-        api.get('/catalog/lab-tests')
-      ]);
-      setMedications(medRes.data);
-      setLabTests(labRes.data);
-    };
-    fetchCatalogs();
+        const fetchCatalogs = async () => {
+        try {
+            // No hospitalId needed in URL - backend scopes automatically via JWT
+            const [medRes, labRes] = await Promise.all([
+            api.get('/pharmacy/medications'),
+            api.get('/laboratory/tests')
+            ]);
+            setMedications(medRes.data);
+            setLabTests(labRes.data);
+        } catch (error) {
+            console.error("Failed to load medication/lab catalogs:", error);
+        }
+        };
+        fetchCatalogs();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -121,9 +127,9 @@ export default function AddConsultationModal({ patientId, onClose, onSaved }) {
                         <option key={med.id} value={med.name}>{med.name} ({med.category})</option>
                     ))}
                 </select>
-              <input placeholder="Dosage" value={newPrescription.dosage} onChange={(e) => setNewPrescription({...newPrescription, dosage: e.target.value})} className="px-3 py-2 border rounded-lg text-sm" />
-              <input placeholder="Frequency" value={newPrescription.frequency} onChange={(e) => setNewPrescription({...newPrescription, frequency: e.target.value})} className="px-3 py-2 border rounded-lg text-sm" />
-              <input placeholder="Duration" value={newPrescription.duration} onChange={(e) => setNewPrescription({...newPrescription, duration: e.target.value})} className="px-3 py-2 border rounded-lg text-sm" />
+              <input placeholder="Dosage" value={newPrescription.dosage} onChange={(e) => setNewPrescription({...newPrescription, dosage: e.target.value})} className="px-3 py-2 border bg-white rounded-lg text-sm" />
+              <input placeholder="Frequency" value={newPrescription.frequency} onChange={(e) => setNewPrescription({...newPrescription, frequency: e.target.value})} className="px-3 py-2 border bg-white rounded-lg text-sm" />
+              <input placeholder="Duration" value={newPrescription.duration} onChange={(e) => setNewPrescription({...newPrescription, duration: e.target.value})} className="px-3 py-2 border bg-white rounded-lg text-sm" />
             </div>
             <button type="button" onClick={addPrescription} className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"><Plus className="h-4 w-4" /> Add Prescription</button>
             

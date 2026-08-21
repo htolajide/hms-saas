@@ -20,8 +20,8 @@ public class PatientController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_SUPER_ADMIN', 'ROLE_HOSPITAL_ADMIN', 'ROLE_DOCTOR', 'ROLE_NURSE')")
-    public ResponseEntity<List<PatientResponseDto>> getAllPatients(@RequestParam Long hospitalId) {
-        return ResponseEntity.ok(patientService.getAllPatients(hospitalId));
+    public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients());
     }
 
     @PostMapping

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { Activity, ArrowLeft, Loader2, Search, Thermometer, Droplet, Heart, Wind, Scale, Ruler } from 'lucide-react';
 import AddTriageModal from '../components/AddTriageModal';
+import { getHospitalId } from '../utils/auth';
 
 export default function TriageManagement() {
   const navigate = useNavigate();

@@ -128,3 +128,14 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #ffffff inset; /* Forces white background */
   transition: background-color 5000s ease-in-out 0s;
 }
+/* Reset all form inputs to light theme by default */
+input, select, textarea {
+  @apply bg-white text-gray-900 border-gray-300;
+}
+
+/* Only make inputs dark if they're inside a specifically dark container */
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  @apply bg-gray-800 text-white border-gray-600;
+}

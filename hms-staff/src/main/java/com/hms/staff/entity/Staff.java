@@ -1,5 +1,6 @@
 package com.hms.staff.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hms.core.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class Staff extends BaseEntity implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore // ✅ ADD THIS
     private String password;
 
     // --- ROLE MAPPING ---

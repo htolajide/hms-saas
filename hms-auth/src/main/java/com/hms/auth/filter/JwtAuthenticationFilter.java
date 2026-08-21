@@ -2,15 +2,14 @@ package com.hms.auth.filter;
 
 import com.hms.auth.service.CustomUserDetailsService;
 import com.hms.auth.service.JwtService;
+import com.hms.core.security.HospitalAuthenticationToken;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,48 +27,51 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
-        // 1. Check if the request has an Authorization header
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        String uri = request.getRequestURI();
+        String authHeader = request.getHeader("Authorization");
 
-        // 2. Extract the token (remove "Bearer " prefix)
-        final String jwt = authHeader.substring(7);
+        System.out.println("🔍 JWT FILTER DEBUG | URI: " + uri);
+        System.out.println("🔍 JWT FILTER DEBUG | Auth Header Present: " + (authHeader != null));
+        System.out.println("🔍 JWT FILTER DEBUG | Auth Header Starts With Bearer: " +
+                (authHeader != null && authHeader.startsWith("Bearer ")));
 
         try {
-            // 3. Extract the username (email) from the token
-            final String userEmail = jwtService.extractUsername(jwt);
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("️ JWT FILTER: Skipping - No valid Bearer token");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-            // 4. If user is found and not already authenticated
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            String token = authHeader.substring(7);
+            String username = jwtService.extractUsername(token);
 
-                // 5. Validate the token against the user details
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    // 6. Create an authentication token and set it in the Security Context
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            System.out.println("🔍 JWT FILTER DEBUG | Extracted Username: " + username);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                boolean isValid = jwtService.isTokenValid(token, userDetails);
+                System.out.println("🔍 JWT FILTER DEBUG | Token Valid: " + isValid);
+
+                if (isValid) {
+                    Long hospitalId = jwtService.extractHospitalId(token);
+                    HospitalAuthenticationToken authToken = new HospitalAuthenticationToken(
+                            userDetails, hospitalId, userDetails.getAuthorities());
+
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("✅ JWT FILTER: Authentication SET for " + username +
+                            " | HospitalID: " + hospitalId);
                 }
             }
         } catch (Exception e) {
-            // Token is invalid or expired. We just don't authenticate the user.
-            // The request will be blocked later by Spring Security if the endpoint requires
-            // auth.
-            logger.warn("Invalid JWT token: " + e.getMessage());
+            System.err.println("❌ JWT FILTER EXCEPTION: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        // 7. Continue the filter chain
         filterChain.doFilter(request, response);
     }
 }

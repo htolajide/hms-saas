@@ -19,15 +19,14 @@ public class Medication extends BaseEntity {
     @Column(name = "hospital_id", nullable = false)
     private Long hospitalId;
 
-    @Column(nullable = false)
-    private String name;
-    private String category;
-    private String manufacturer;
+    // In Medication.java - REPLACE name, category, price fields with:
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "master_id", nullable = false)
+    private MedicationMaster master;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal price;
-
-    // Inventory Fields
     private Integer stockLevel = 0;
     private Integer reorderLevel = 10;
+
+    private String manufacturer;
+
 }

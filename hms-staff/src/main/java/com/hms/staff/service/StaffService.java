@@ -1,5 +1,6 @@
 package com.hms.staff.service;
 
+import com.hms.core.security.HospitalAuthenticationToken;
 import com.hms.staff.dto.StaffRequestDto;
 import com.hms.staff.dto.StaffResponseDto;
 import com.hms.staff.entity.Department;
@@ -11,6 +12,11 @@ import com.hms.staff.repository.RankRepository;
 import com.hms.staff.repository.RoleRepository;
 import com.hms.staff.repository.StaffRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +45,38 @@ public class StaffService {
 
     @Transactional(readOnly = true)
     public List<StaffResponseDto> getAllStaff() {
-        return staffRepository.findAll().stream()
+        // In StaffService.createStaff(), getAllStaff(), etc.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Long hospitalId;
+        boolean isSuperAdmin = false;
+
+        if (auth instanceof HospitalAuthenticationToken) {
+            HospitalAuthenticationToken hat = (HospitalAuthenticationToken) auth;
+            hospitalId = hat.getHospitalId();
+            isSuperAdmin = (hat.getHospitalId() == null);
+        } else {
+            // Fallback: This should NEVER happen in production, but prevents crashes
+            throw new AccessDeniedException("Invalid authentication context. Please re-login.");
+        }
+
+        String role = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst().orElse("");
+
+        List<Staff> staffList;
+
+        // Super Admin can see ALL staff across all hospitals
+        // Super Admin CANNOT access hospital-specific endpoints
+        if (isSuperAdmin) {
+            staffList = staffRepository.findByHospitalId(null);
+        }
+        // Hospital Admin can ONLY see staff in their specific hospital
+        else {
+            staffList = staffRepository.findByHospitalId(hospitalId);
+        }
+
+        return staffList.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
     }
@@ -81,9 +118,25 @@ public class StaffService {
         if (photo != null && !photo.isEmpty()) {
             photoFilename = savePhoto(photo);
         }
+        // In StaffService.createStaff(), getAllStaff(), etc.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Long hospitalId;
+        boolean isSuperAdmin = false;
+
+        if (auth instanceof HospitalAuthenticationToken) {
+            HospitalAuthenticationToken hat = (HospitalAuthenticationToken) auth;
+            hospitalId = hat.getHospitalId();
+            isSuperAdmin = (hat.getHospitalId() == null);
+        } else {
+            // Fallback: This should NEVER happen in production, but prevents crashes
+            throw new AccessDeniedException("Invalid authentication context. Please re-login.");
+        }
+
+        // Now use hospitalId safely
 
         Staff staff = Staff.builder()
-                .hospitalId(dto.getHospitalId())
+                .hospitalId(hospitalId)
                 .staffId(dto.getStaffId())
                 .fullName(dto.getFullName())
                 .email(dto.getEmail())

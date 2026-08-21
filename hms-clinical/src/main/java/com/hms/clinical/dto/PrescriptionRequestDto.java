@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PrescriptionRequestDto {
+    private Long hospitalId;
     private String medicationName;
     private String dosage;
     private String frequency;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import { ClipboardList, ArrowLeft, Loader2, Plus, FileText, Pill, TestTube } from 'lucide-react';
+import { ClipboardList, ArrowLeft, Loader2, Plus, FileText, Pill, TestTube, Activity } from 'lucide-react';
 import AddConsultationModal from '../components/AddConsultationModal';
 
 export default function ConsultationPage() {
@@ -182,8 +182,8 @@ export default function ConsultationPage() {
           ))}
         </div>
       )}
-
-      {isModalOpen && <AddConsultationModal patientId={patientId} onClose={() => setIsModalOpen(false)} onSaved={fetchConsultations} />}
+      {/* NEW (Replace with this): */}
+      {isModalOpen && <AddConsultationModal patientId={patientId} onClose={() => setIsModalOpen(false)} onSaved={fetchPatientData} />}
     </div>
   );
 }

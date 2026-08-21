@@ -21,7 +21,6 @@ public class HospitalController {
     private final HospitalRepository hospitalRepository;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')") // ONLY Super Admin can create hospitals
     public ResponseEntity<Hospital> createHospital(@RequestBody HospitalRequestDto dto) {
         Hospital created = hospitalService.createHospital(dto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);

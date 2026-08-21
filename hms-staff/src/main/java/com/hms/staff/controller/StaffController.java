@@ -24,7 +24,9 @@ public class StaffController {
     private final StaffService staffService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_SUPER_ADMIN', 'ROLE_HOSPITAL_ADMIN')")
     public ResponseEntity<List<StaffResponseDto>> getAllStaff() {
+        // Service handles the scoping automatically based on JWT
         return ResponseEntity.ok(staffService.getAllStaff());
     }
 

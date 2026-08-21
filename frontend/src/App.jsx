@@ -8,6 +8,10 @@ import ResetPassword from './pages/ResetPassword';
 import PatientManagement from './pages/PatientManagement';
 import TriageManagement from './pages/TriageManagement';
 import ConsultationPage from './pages/ConsultationPage';
+import PharmacyManagement from './pages/PharmacyManagement';
+import LaboratoryManagement from './pages/LaboratoryManagement';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import HospitalSettings from './pages/HospitalSettings';
 import { LogOut, Building2 } from 'lucide-react';
 
 const DashboardLayout = ({ children }) => {
@@ -28,8 +32,7 @@ const DashboardLayout = ({ children }) => {
             {/* Logo and Home Link */}
             <div 
               className="flex items-center space-x-3 cursor-pointer" 
-              onClick={() => window.location.href = '/dashboard'}
-            >
+              onClick={() => window.location.href = '/dashboard'}>
               <div className="bg-primary p-2 rounded-lg">
                 <Building2 className="h-6 w-6 text-white" />
               </div>
@@ -38,7 +41,6 @@ const DashboardLayout = ({ children }) => {
                 <p className="text-xs text-gray-500 font-medium">{role}</p>
               </div>
             </div>
-            
             {/* User Info and Logout */}
             <div className="flex items-center space-x-4">
               <div className="hidden md:block text-right">
@@ -47,8 +49,7 @@ const DashboardLayout = ({ children }) => {
               </div>
               <button 
                 onClick={handleLogout} 
-                className="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition text-sm font-medium border border-red-200"
-              >
+                className="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition text-sm font-medium border border-red-200">
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Logout</span>
               </button>
@@ -56,12 +57,10 @@ const DashboardLayout = ({ children }) => {
           </div>
         </div>
       </header>
-
       {/* Main Content Area */}
       <main className="flex-grow px-6 lg:px-12 py-8 w-full">
         {children}
       </main>
-
       {/* Footer */}
       <footer className="bg-white py-4">
         <div className="px-6 lg:px-12 text-center text-xs text-gray-500">
@@ -89,7 +88,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
         {/* PROTECTED ROUTES */}
         <Route 
           path="/dashboard" 
@@ -107,7 +105,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-      
         <Route 
           path="/patients" 
           element={
@@ -115,16 +112,13 @@ function App() {
               <PatientManagement />
             </ProtectedRoute>
           } />
-
         <Route 
           path="/triage" 
           element={
             <ProtectedRoute>
               <TriageManagement />
             </ProtectedRoute>
-
           } />
-          
         <Route 
             path="/consultations" 
             element={
@@ -132,7 +126,29 @@ function App() {
                   <ConsultationPage />
               </ProtectedRoute>
             } />
-        
+        <Route 
+          path="/pharmacy" 
+          element={
+            <ProtectedRoute>
+              <PharmacyManagement />
+            </ProtectedRoute>
+          } />
+        <Route 
+          path="/laboratory" 
+          element={
+            <ProtectedRoute>
+              <LaboratoryManagement />
+            </ProtectedRoute>
+          } />
+        <Route 
+          path="/super-admin" 
+          element={
+            <ProtectedRoute>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          } 
+        /> 
+        <Route path="/settings" element={<ProtectedRoute><HospitalSettings /></ProtectedRoute>} /> 
         {/* Placeholder routes for future modules */}
         <Route path="/patients" element={<ProtectedRoute><div className="p-8 text-2xl font-bold text-gray-500">Patient Module Coming Soon...</div></ProtectedRoute>} />
         <Route path="/finance" element={<ProtectedRoute><div className="p-8 text-2xl font-bold text-gray-500">Finance Module Coming Soon...</div></ProtectedRoute>} />

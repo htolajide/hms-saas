@@ -22,6 +22,7 @@ export default function Login() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
       localStorage.setItem('fullName', response.data.fullName);
+      localStorage.setItem('hospitalId', response.data.hospitalId); 
 
       // Redirect to dashboard
       navigate('/dashboard');

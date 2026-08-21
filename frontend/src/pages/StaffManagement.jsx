@@ -6,13 +6,11 @@ import AddStaffModal from '../components/AddStaffModal';
 
 export default function StaffManagement() {
   const navigate = useNavigate(); // <-- INITIALIZE NAVIGATE
-  
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editStaff, setEditStaff] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-
   const fetchStaff = async () => {
     try {
       const response = await api.get('/staff');
@@ -23,11 +21,9 @@ export default function StaffManagement() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchStaff();
   }, []);
-
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       try {
@@ -38,24 +34,19 @@ export default function StaffManagement() {
       }
     }
   };
-
   const filteredStaff = staffList.filter(staff => 
     staff.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     staff.roleName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="space-y-6">
-      
       {/* 1. BACK TO DASHBOARD BUTTON */}
       <button 
         onClick={() => navigate('/dashboard')} 
-        className="flex items-center gap-2 text-gray-500 hover:text-primary transition font-medium text-sm"
-      >
+        className="flex items-center gap-2 text-gray-500 hover:text-primary transition font-medium text-sm">
         <ArrowLeft className="h-4 w-4" /> Back to Dashboard
       </button>
-
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -67,15 +58,12 @@ export default function StaffManagement() {
           </h2>
           <p className="text-gray-500 mt-2 ml-12">Manage hospital staff and their roles.</p>
         </div>
-        
         <button 
           onClick={() => { setEditStaff(null); setIsModalOpen(true); }}
-          className="flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition shadow-md hover:shadow-lg font-medium"
-        >
+          className="flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition shadow-md hover:shadow-lg font-medium">
           <Plus className="h-5 w-5" /> Add New Staff
         </button>
       </div>
-
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
@@ -87,7 +75,6 @@ export default function StaffManagement() {
           className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none shadow-sm"
         />
       </div>
-
       {/* 2. DATA TABLE (Removed borders and fixed widths) */}
       {loading ? (
         <div className="flex justify-center items-center py-20">
@@ -109,6 +96,7 @@ export default function StaffManagement() {
               <thead className="bg-gray-50/50">
                 <tr>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Staff</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Department</th>
@@ -142,6 +130,7 @@ export default function StaffManagement() {
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{staff.phone}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{staff.email}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
@@ -159,15 +148,13 @@ export default function StaffManagement() {
                         <button 
                           onClick={() => { setEditStaff(staff); setIsModalOpen(true); }} 
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="Edit"
-                        >
+                          title="Edit">
                           <Edit className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(staff.id, staff.fullName)} 
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete"
-                        >
+                          title="Delete">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -177,7 +164,6 @@ export default function StaffManagement() {
               </tbody>
             </table>
           </div>
-
           {/* Mobile Cards (Kept clean and borderless) */}
           <div className="md:hidden divide-y divide-gray-100">
             {filteredStaff.map((staff) => (
@@ -218,7 +204,6 @@ export default function StaffManagement() {
           </div>
         </div>
       )}
-
       {/* Add/Edit Staff Modal */}
       {isModalOpen && (
         <AddStaffModal 

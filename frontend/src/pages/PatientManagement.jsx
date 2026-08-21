@@ -12,12 +12,11 @@ export default function PatientManagement() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Hardcoded for now, later we will get this from the logged-in user's profile
-  const hospitalId = 1; 
 
   const fetchPatients = async () => {
     try {
-      const response = await api.get(`/patients?hospitalId=${hospitalId}`);
-      setPatients(response.data);
+        const response = await api.get('/patients'); 
+        setPatients(response.data);
     } catch (error) {
       console.error("Failed to fetch patients", error);
     } finally {

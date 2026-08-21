@@ -21,7 +21,10 @@ public class LabTest extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
-    private String category;
+
+    @Column(name = "category_key", nullable = false)
+    private String categoryKey;
+
     private String description;
 
     @Column(precision = 10, scale = 2)
